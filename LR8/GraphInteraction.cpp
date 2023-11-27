@@ -225,15 +225,16 @@ vector<int> GraphInteraction::isCyclicBFS()
 
 						for (auto& el : parentsOfCur)
 						{
-							if (find(parentsOfJ.begin(), parentsOfJ.end(), el) != parentsOfJ.end())
+							vector<int>::iterator it = find(parentsOfJ.begin(), parentsOfJ.end(), el);
+							if (it != parentsOfJ.end())
 							{
-								if (el != parentsOfCur.back())
+								while (el != parentsOfCur.back())
 								{
-									parentsOfCur.erase(parentsOfCur.begin() + el + 1, parentsOfCur.end());
+									parentsOfCur.pop_back();
 								}
-								if (el != parentsOfJ.back())
+								while (el != parentsOfJ.back())
 								{
-									parentsOfJ.erase(parentsOfJ.begin() + el + 1, parentsOfJ.end());
+									parentsOfJ.pop_back();
 								}
 
 								reverse(parentsOfCur.begin(), parentsOfCur.end());
@@ -323,41 +324,47 @@ vector<vector<int>> GraphInteraction::FindCompsDFS()
 	return result;
 }
 
-bool GraphInteraction::DFSCycle(vector<bool>& visited, vector<int>& path, int curVert)
+bool GraphInteraction::DFSCycle(vector<int>& visited, vector<int>& path, vector<int>& parents, int curVert)
 {
-	visited[curVert] = true;
+	visited[curVert] = 0;
 	path.push_back(curVert);
 
 	for (int i = 1; i <= verts; i++)
 	{
-		if (adjacencyM[curVert][i] && !visited[i])
+		if (adjacencyM[curVert][i] && visited[i] == -1)
 		{
-			if (DFSCycle(visited, path, i))
+			parents[i] = curVert;			
+			visited[i] = 0;
+			DFSCycle(visited, path, parents, curVert);
+		}
+		else if (adjacencyM[curVert][i] && visited[i] != 1)
+		{
+			if (visited[i] == 0 && parents[curVert] != i)
 			{
+				path.push_back(path.front());
 				return true;
 			}
 		}
-		else if (adjacencyM[curVert][i] && find(path.begin(), path.end(), i) != path.end())
-		{
-			return true;
-		}
 	}
 
-	path.pop_back();
+	visited[curVert] = 1;
+
+	//path.pop_back();
 
 	return false;
 }
 
 vector<int> GraphInteraction::isCyclicDFS()
 {
-	vector<bool> visited(verts + 1);
+	vector<int> visited(verts + 1, -1);
+	vector<int> parents(verts + 1, -1);  // -1 - не посещена      0 - посещена      1 - обработана
 
 	for (int i = 1; i <= verts; i++)
 	{
-		if (!visited[i])
+		if (visited[i] == -1)
 		{
 			vector<int> result;
-			if (DFSCycle(visited, result, i))
+			if (DFSCycle(visited, result, parents, i))
 			{
 				return result;
 			}
@@ -366,4 +373,3 @@ vector<int> GraphInteraction::isCyclicDFS()
 
 	return vector<int>();
 }
-

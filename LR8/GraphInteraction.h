@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include <conio.h>
+#include <algorithm>
 
 #include <list>
 #include <queue>
@@ -39,6 +40,6 @@ public:
 	void DFSComps(vector<int>& comp, vector<bool>& status, int curVert);
 	vector<vector<int>> FindCompsDFS();
 
-	bool DFSCycle(vector<bool>& visited, vector<int>& path, int curVert);
+	bool DFSCycle(vector<int>& visited, vector<int>& path, vector<int>& parents, int curVert);
 	vector<int> isCyclicDFS();
 };
