@@ -4,7 +4,7 @@
 
 #include <Windows.h>
 #include <conio.h>
-#include <algorithm>
+#include <cmath>
 
 #include <list>
 #include <queue>
@@ -42,4 +42,7 @@ public:
 
 	bool DFSCycle(vector<int>& visited, vector<int>& path, vector<int>& parents, int curVert);
 	vector<int> isCyclicDFS();
+
+	void DFSArticPoint(int curVert, int parentVert, int curTime, vector<bool>& visited, vector<int>& entryTimes, vector<int>& minEntryTimes, vector<bool>& isArtic);
+	vector<int> FindArticPoints();
 };

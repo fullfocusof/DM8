@@ -1,2 +1,5 @@
 ﻿  GraphInteraction.cpp
-  LR8.vcxproj -> D:\Users\class\source\repos\DM8\x64\Debug\LR8.exe
+E:\Projects\DiscreteMath\DM8\LR8\GraphInteraction.cpp(347,16): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Main.cpp
+  Создание кода...
+  LR8.vcxproj -> E:\Projects\DiscreteMath\DM8\x64\Debug\LR8.exe

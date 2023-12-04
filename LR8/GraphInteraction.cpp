@@ -334,22 +334,34 @@ bool GraphInteraction::DFSCycle(vector<int>& visited, vector<int>& path, vector<
 		if (adjacencyM[curVert][i] && visited[i] == -1)
 		{
 			parents[i] = curVert;			
-			visited[i] = 0;
-			DFSCycle(visited, path, parents, curVert);
+			if (DFSCycle(visited, path, parents, i))
+			{
+				return true;
+			}
 		}
 		else if (adjacencyM[curVert][i] && visited[i] != 1)
 		{
 			if (visited[i] == 0 && parents[curVert] != i)
 			{
-				path.push_back(path.front());
+				int cycleStartID = -1;
+				for (int i = path.size() - 1; i >= 0; i--)
+				{
+					if (adjacencyM[curVert][path[i]] && path[i] != parents[curVert])
+					{
+						cycleStartID = i;
+						path.erase(path.begin(), path.begin() + cycleStartID);
+						path.push_back(path.front());
+						break;
+					}
+				}
+
 				return true;
 			}
 		}
 	}
 
 	visited[curVert] = 1;
-
-	//path.pop_back();
+	path.pop_back();
 
 	return false;
 }
@@ -363,13 +375,79 @@ vector<int> GraphInteraction::isCyclicDFS()
 	{
 		if (visited[i] == -1)
 		{
-			vector<int> result;
-			if (DFSCycle(visited, result, parents, i))
+			vector<int> cycle;
+			if (DFSCycle(visited, cycle, parents, i))
 			{
-				return result;
+				return cycle;
 			}
 		}
 	}
 
 	return vector<int>();
+}
+
+void GraphInteraction::DFSArticPoint(int curVert, int parentVert, int curTime, vector<bool>& visited, vector<int>& entryTimes, vector<int>& minEntryTimes, vector<bool>& isArtic)
+{
+	visited[curVert] = true;
+	entryTimes[curVert] = curTime;
+	minEntryTimes[curVert] = curTime;
+
+	int childs = 0;
+
+	for (int i = 1; i <= verts; i++)
+	{
+		if (adjacencyM[curVert][i])
+		{
+			if (i != parentVert)
+			{
+				if (!visited[i])
+				{
+					childs++;
+
+					DFSArticPoint(i, curVert, curTime + 1, visited, entryTimes, minEntryTimes, isArtic);
+
+					minEntryTimes[curVert] = min(minEntryTimes[curVert], minEntryTimes[i]);
+
+					if (parentVert != -1 && entryTimes[curVert] <= minEntryTimes[i]) isArtic[curVert] = true;
+				}
+				else
+				{
+					minEntryTimes[curVert] = min(minEntryTimes[curVert], entryTimes[i]);
+				}
+			}
+		}
+	}
+
+	if (parentVert == -1 && childs >= 2)
+	{
+		isArtic[curVert] = true;
+	}
+}
+
+vector<int> GraphInteraction::FindArticPoints()
+{
+	vector<int> result;
+
+	vector<bool> visited(verts + 1);
+	vector<int> entryTimes(verts + 1, 0);
+	vector<int> minEntryTimes(verts + 1, 0);
+	vector<bool> isArtic(verts + 1);
+
+	for (int i = 1; i <= verts; i++)
+	{
+		if (!visited[i]) 
+		{
+			DFSArticPoint(i, -1, 0, visited, entryTimes, minEntryTimes, isArtic);
+		}
+	}
+
+	for (int i = 1; i < isArtic.size(); i++)
+	{
+		if (isArtic[i])
+		{
+			result.push_back(i);
+		}
+	}
+
+	return result;
 }

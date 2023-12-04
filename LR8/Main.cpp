@@ -49,6 +49,7 @@ int main()
 			"Покраска графа(BFS)",
 			"Найти количество компонент связности графа(DFS)",
 			"Проверка на циклы(DFS)",
+			"Найти точки сочленения(DFS)",
 			"Выход"
 		};
 
@@ -233,9 +234,9 @@ int main()
 						{
 							cout << "Длина цикла - " << cycleVerts.size() - 1 << endl;
 							cout << "Маршрут цикла: ";
-							for (auto& el : cycleVerts)
+							for (auto& vert : cycleVerts)
 							{
-								cout << el << " ";
+								cout << vert << " ";
 							}
 							cout << endl << endl;
 						}
@@ -245,6 +246,30 @@ int main()
 					break;
 
 					case 8:
+					{
+						system("cls");
+
+						vector<int> articPts = GI.FindArticPoints();
+
+						if (articPts.empty())
+						{
+							cout << "В исходном графе нет точек сочленения";
+						}
+						else
+						{
+							cout << "Точки сочленения: ";
+							for (auto& vert : articPts)
+							{
+								cout << vert << " ";
+							}
+							cout << endl << endl;
+						}
+
+						GI.printQuit();
+					}
+					break;
+
+					case 9:
 					{
 						exitProg = true;
 					}
